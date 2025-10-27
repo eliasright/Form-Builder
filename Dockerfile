@@ -5,7 +5,7 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install all dependencies (including devDependencies for Vite)
 RUN npm install
 
 # Copy source code
@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 5173
 
 # Start development server
-CMD ["npx", "vite", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

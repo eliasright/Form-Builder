@@ -204,7 +204,7 @@ const handleSubmit = () => {
 <style scoped>
 .form-viewer {
   min-height: 100vh;
-  background: #f8fafc;
+  background: var(--p-surface-ground);
   padding: 2rem 1rem;
   display: flex;
   align-items: center;
@@ -212,7 +212,8 @@ const handleSubmit = () => {
 }
 
 .form-container {
-  background: white;
+  background: var(--p-surface-card);
+  border: 1px solid var(--p-surface-border);
   border-radius: 12px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   max-width: 800px;
@@ -232,6 +233,7 @@ const handleSubmit = () => {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.2;
+  color: var(--p-text-color);
 }
 
 .form-description {
@@ -239,6 +241,7 @@ const handleSubmit = () => {
   font-size: 1.1rem;
   opacity: 0.9;
   line-height: 1.5;
+  color: var(--p-text-muted-color);
 }
 
 .form-content {
@@ -278,7 +281,7 @@ const handleSubmit = () => {
   gap: 1rem;
   justify-content: center;
   padding-top: 2rem;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--p-surface-border);
   margin-top: 2rem;
 }
 
@@ -309,21 +312,21 @@ const handleSubmit = () => {
 }
 
 .submit-btn:disabled {
-  background: #d1d5db;
-  color: #9ca3af;
+  background: var(--p-surface-300);
+  color: var(--p-text-muted-color);
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
 .reset-btn {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: var(--p-surface-100);
+  color: var(--p-text-color);
+  border: 1px solid var(--p-surface-border);
 }
 
 .reset-btn:hover {
-  background: #e5e7eb;
+  background: var(--p-surface-200);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -333,12 +336,13 @@ const handleSubmit = () => {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--p-green-50);
+  color: var(--p-green-800);
   padding: 1rem;
   margin: 1rem 2rem;
   border-radius: 8px;
   font-weight: 500;
+  border: 1px solid var(--p-green-200);
 }
 
 .success-message i {
@@ -348,19 +352,19 @@ const handleSubmit = () => {
 .empty-form-state {
   padding: 3rem 2rem;
   text-align: center;
-  color: #6b7280;
+  color: var(--p-text-muted-color);
 }
 
 .empty-icon {
   font-size: 4rem;
-  color: #d1d5db;
+  color: var(--p-surface-400);
   margin-bottom: 1.5rem;
 }
 
 .empty-form-state h3 {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
-  color: #374151;
+  color: var(--p-text-color);
 }
 
 .empty-form-state p {
@@ -441,7 +445,7 @@ const handleSubmit = () => {
 
 .form-viewer:has(.form-content:empty) .form-container::before {
   content: "No form elements to display";
-  color: #6b7280;
+  color: var(--p-text-muted-color);
   font-size: 1.1rem;
 }
 </style>
