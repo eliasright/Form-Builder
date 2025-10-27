@@ -16,6 +16,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5179,
+    allowedHosts: ['form.eliasright.dev', 'localhost', '127.0.0.1'],
     watch: {
       usePolling: true
     },
