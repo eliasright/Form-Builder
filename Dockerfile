@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install all dependencies (including devDependencies for Vite)
-RUN npm install
+RUN npm install --production=false
 
 # Copy source code
 COPY . .
