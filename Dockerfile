@@ -2,11 +2,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Install Vite globally as fallback
+RUN npm install -g vite
+
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Clear npm cache and install dependencies with verbose logging
+RUN npm cache clean --force && \
+    npm install --verbose
 
 # Copy source code
 COPY . .
