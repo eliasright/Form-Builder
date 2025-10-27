@@ -115,8 +115,11 @@ src/
 ### Prerequisites
 - Node.js ^20.19.0 || >=22.12.0
 - npm or yarn
+- Docker & Docker Compose (for containerized setup)
 
 ### Installation
+
+#### Option 1: Local Development
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -130,6 +133,37 @@ npm run dev
 
 # Build for production
 npm run build
+```
+
+#### Option 2: Docker Development
+```bash
+# Clone the repository
+git clone <repository-url>
+cd form-builder
+
+# Start development server with Docker
+docker-compose --profile development up form-builder-dev
+
+# Or build and run production container
+docker-compose up form-builder
+```
+
+### Docker Commands
+```bash
+# Build and start production container
+docker-compose up -d
+
+# Start development environment
+docker-compose --profile development up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop containers
+docker-compose down
+
+# Rebuild containers
+docker-compose build --no-cache
 ```
 
 ### Usage
