@@ -755,7 +755,14 @@ import { elementConfig as dividerConfig } from './form-elements/DividerElement.v
 import { elementConfig as dateConfig } from './form-elements/DatePickerElement.vue'
 import { elementConfig as imageConfig } from './form-elements/ImageUploadElement.vue'
 import FormViewer from '@/components/FormViewer.vue'
-import type { FormSchema, FormRow, FormColumn } from '@/types/schema'
+import type { FormSchema, FormRow, FormColumn, LegacyFormSchema } from '@/types/schema'
+
+interface SavedForm {
+  id: string
+  name: string
+  timestamp: number
+  data: LegacyFormSchema
+}
 
 const selectedElement = ref<FormColumn | null>(null)
 const showMobileSettings = ref(false)
@@ -765,7 +772,7 @@ const showDropdown = ref(false)
 const showRowControls = ref(true)
 const showFormsModal = ref(false)
 const formsModalMode = ref<'save' | 'load'>('load')
-const savedForms = ref<Array<{id: string, name: string, timestamp: number, data: any}>>([])
+const savedForms = ref<SavedForm[]>([])
 const newFormName = ref('')
 const showPreviewModal = ref(false)
 
@@ -1285,15 +1292,19 @@ const importForm = () => {
   const input = document.createElement('input')
   input.type = 'file'
   input.accept = '.json'
-  input.onchange = (e: any) => {
-    const file = e.target.files[0]
+  input.onchange = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    const file = target.files?.[0]
     if (file) {
       const reader = new FileReader()
-      reader.onload = (event: any) => {
+      reader.onload = (event: ProgressEvent<FileReader>) => {
         try {
-          const parsed = JSON.parse(event.target.result)
-          Object.assign(schema, parsed)
-          selectedElement.value = null
+          const result = event.target?.result
+          if (typeof result === 'string') {
+            const parsed = JSON.parse(result)
+            Object.assign(schema, parsed)
+            selectedElement.value = null
+          }
         } catch (error) {
           alert('Invalid JSON file')
         }
@@ -1397,7 +1408,7 @@ const saveFormWithName = () => {
   alert(`Form "${formData.name}" saved successfully!`)
 }
 
-const loadSelectedForm = (form: any) => {
+const loadSelectedForm = (form: SavedForm) => {
   Object.assign(schema, form.data)
   selectedElement.value = null
   closeFormsModal()
@@ -1495,9 +1506,9 @@ const getSettingValue = (key: string) => {
   return value
 }
 
-const updateSettingValue = (key: string, value: any) => {
+const updateSettingValue = (key: string, value: unknown) => {
   if (!selectedElement.value) return
-  
+
   const keys = key.split('.')
   let target = selectedElement.value
   

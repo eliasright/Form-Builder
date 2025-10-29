@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { RouterView } from 'vue-router'
 import Button from 'primevue/button'
 
 const router = useRouter()
-const isDark = ref(false)
+const isDark = ref<boolean>(false)
 
 const THEME_STORAGE_KEY = 'formbuilder_theme'
 

@@ -73,7 +73,33 @@ export interface FormValidation {
 }
 
 export interface FormElementProps {
-  [key: string]: any // More flexible props interface
+  maxlength?: number
+  rows?: number
+  autoResize?: boolean
+  spellcheck?: boolean
+  inputType?: string
+  autocomplete?: string
+  inputMode?: string
+  defaultCountry?: string
+  allowedCountries?: string[]
+  maxSize?: number
+  allowedTypes?: string[]
+  options?: Array<{ label: string; value: string }>
+  multiple?: boolean
+  level?: number
+  text?: string
+  style?: string
+  min?: number
+  max?: number
+  step?: number
+  accept?: string
+  previewUrl?: string
+  dateFormat?: string
+  showTime?: boolean
+  alignment?: 'left' | 'center' | 'right'
+  size?: 'small' | 'medium' | 'large'
+  color?: string
+  layout?: 'vertical' | 'horizontal'
 }
 
 export interface ConditionalDisplay {

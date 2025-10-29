@@ -96,7 +96,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  submit: [data: Record<string, any>]
+  submit: [data: Record<string, unknown>]
   reset: []
   close: []
 }>()
@@ -180,7 +180,7 @@ const getElementComponent = (type: string) => {
 
 
 // Update field value
-const updateFieldValue = (fieldId: string, value: any) => {
+const updateFieldValue = (fieldId: string, value: unknown) => {
   formData.value[fieldId] = value
 }
 

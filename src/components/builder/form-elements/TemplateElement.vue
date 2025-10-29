@@ -42,12 +42,16 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import type { FormColumn } from '@/types/schema'
+import { deepMerge, getNestedValue } from '@/utils/helpers'
 
 // EVERYTHING IS SELF-CONTAINED HERE - NO EXTERNAL DEPENDENCIES
 interface Props {
   // Optional: can override defaults, but element works without any props
   overrides?: Partial<typeof defaultConfig>
   isPreview?: boolean
+  column?: FormColumn
+  formData?: Record<string, unknown>
 }
 
 const props = defineProps<Props>()
@@ -149,22 +153,11 @@ const defaultConfig = {
 // Merge props with defaults
 const config = computed(() => {
   if (!props.overrides) return defaultConfig
-  
+
   // Deep merge overrides with defaults
-  const merged = JSON.parse(JSON.stringify(defaultConfig))
-  
-  function deepMerge(target: any, source: any) {
-    for (const key in source) {
-      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-        if (!target[key]) target[key] = {}
-        deepMerge(target[key], source[key])
-      } else {
-        target[key] = source[key]
-      }
-    }
-  }
-  
-  deepMerge(merged, props.overrides)
+  let merged = JSON.parse(JSON.stringify(defaultConfig))
+
+  merged = deepMerge(merged, props.overrides)
   return merged
 })
 
@@ -223,14 +216,11 @@ const validateInput = () => {
     }
   }
 }
-
-// Helper to get nested object values
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((o, p) => o?.[p], obj)
-}
 </script>
 
 <script lang="ts">
+import { getNestedValue } from '@/utils/helpers'
+
 // EXPORT STATIC CONFIGURATION FOR FORM BUILDER
 const defaultConfig = {
   // Element metadata
@@ -327,18 +317,13 @@ const defaultConfig = {
 
 export const elementConfig = defaultConfig
 
-// EXPORT SETTINGS GENERATOR 
+// EXPORT SETTINGS GENERATOR
 // This generates the settings panel dynamically
-export function generateSettings(currentConfig: any) {
+export function generateSettings(currentConfig: typeof defaultConfig) {
   return defaultConfig.settings.map(setting => ({
     ...setting,
     value: getNestedValue(currentConfig, setting.key)
   }))
-}
-
-// Helper to get nested object values
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((o, p) => o?.[p], obj)
 }
 </script>
 

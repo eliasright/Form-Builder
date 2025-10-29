@@ -46,12 +46,19 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import type { FormColumn } from '@/types/schema'
+import { deepMerge, getNestedValue } from '@/utils/helpers'
 
 interface Props {
   overrides?: Partial<typeof defaultConfig>
   isPreview?: boolean
-  column?: any
+  column?: FormColumn
+  formData?: Record<string, unknown>
 }
+
+const emit = defineEmits<{
+  'update-value': [fieldName: string, value: string]
+}>()
 
 const props = defineProps<Props>()
 
@@ -189,19 +196,9 @@ const config = computed(() => {
   
   // Apply any additional overrides
   if (props.overrides) {
-    function deepMerge(target: any, source: any) {
-      for (const key in source) {
-        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-          if (!target[key]) target[key] = {}
-          deepMerge(target[key], source[key])
-        } else {
-          target[key] = source[key]
-        }
-      }
-    }
-    deepMerge(merged, props.overrides)
+    merged = deepMerge(merged, props.overrides)
   }
-  
+
   return merged
 })
 
@@ -225,34 +222,36 @@ const isValid = computed(() => {
 const validateInput = () => {
   validationError.value = ''
   const val = config.value.validation
-  
+
+  // Emit value change for conditional display
+  if (props.column?.name && !props.isPreview) {
+    emit('update-value', props.column.name, inputValue.value)
+  }
+
   // Required validation
   if (!inputValue.value && val.required) {
     validationError.value = val.customMessage || 'This field is required'
     return
   }
-  
+
   if (!inputValue.value) return
-  
+
   // Length validation
   if (inputValue.value.length < val.minLength) {
     validationError.value = `Minimum ${val.minLength} characters required`
     return
   }
-  
+
   if (val.maxLength && inputValue.value.length > val.maxLength) {
     validationError.value = `Maximum ${val.maxLength} characters allowed`
     return
   }
 }
-
-// Helper to get nested object values
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((o, p) => o?.[p], obj)
-}
 </script>
 
 <script lang="ts">
+import { getNestedValue } from '@/utils/helpers'
+
 // EXPORT STATIC CONFIGURATION FOR FORM BUILDER
 const defaultConfig = {
   // Element metadata
@@ -374,17 +373,12 @@ const defaultConfig = {
 
 export const elementConfig = defaultConfig
 
-// EXPORT SETTINGS GENERATOR 
-export function generateSettings(currentConfig: any) {
+// EXPORT SETTINGS GENERATOR
+export function generateSettings(currentConfig: typeof defaultConfig) {
   return defaultConfig.settings.map(setting => ({
     ...setting,
     value: getNestedValue(currentConfig, setting.key)
   }))
-}
-
-// Helper to get nested object values
-function getNestedValue(obj: any, path: string) {
-  return path.split('.').reduce((o, p) => o?.[p], obj)
 }
 </script>
 

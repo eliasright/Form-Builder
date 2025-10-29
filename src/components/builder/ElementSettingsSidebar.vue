@@ -105,11 +105,11 @@ const emit = defineEmits<{
   deleteElement: []
 }>()
 
-const updateField = (field: keyof FormColumn, value: any): void => {
+const updateField = (field: keyof FormColumn, value: unknown): void => {
   emit('updateElement', { [field]: value })
 }
 
-const updateValidation = (field: string, value: any): void => {
+const updateValidation = (field: string, value: unknown): void => {
   if (!props.element) return
   emit('updateElement', {
     validation: {
@@ -119,7 +119,7 @@ const updateValidation = (field: string, value: any): void => {
   })
 }
 
-const updateProps = (field: string, value: any): void => {
+const updateProps = (field: string, value: unknown): void => {
   if (!props.element) return
   emit('updateElement', {
     props: {
