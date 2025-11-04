@@ -1,0 +1,255 @@
+/**
+ * Shared styles for form elements
+ * Extracted from individual components to follow DRY principle
+ */
+
+/* Form element container */
+.form-element {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Label styles */
+.element-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #000000; /* Pure black text in light mode */
+}
+
+@media (prefers-color-scheme: dark) {
+  .element-label {
+    color: #f1f5f9;
+  }
+}
+
+.required-indicator {
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+/* Description/help text */
+.element-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: -0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .element-description {
+    color: #9ca3af;
+  }
+}
+
+.help-text {
+  color: #6b7280;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .help-text {
+    color: #9ca3af;
+  }
+}
+
+/* Input base styles - LIGHT MODE DEFAULT */
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1.5px solid #d1d5db !important;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Force light mode styles */
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+  .form-input {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border-color: #d1d5db !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .form-input {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: #475569 !important;
+  }
+}
+
+.form-input:hover:not(:disabled) {
+  border-color: var(--primary-color, #3b82f6) !important;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+.form-input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-input::placeholder {
+  color: #9ca3af;
+}
+
+/* Input states */
+.form-input.has-error {
+  border-color: #ef4444 !important;
+}
+
+.form-input.has-error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.form-input.is-valid {
+  border-color: #10b981 !important;
+  padding-right: 2.5rem; /* Make room for checkmark */
+}
+
+/* Validation messages */
+.error-message {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message::before {
+  content: '⚠';
+  font-size: 1rem;
+}
+
+/* Success indicator - icon only, positioned inside input */
+.input-wrapper {
+  position: relative;
+}
+
+.success-indicator {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #10b981;
+  font-size: 1.25rem;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-indicator::before {
+  content: '✓';
+  font-weight: bold;
+}
+
+/* Textarea specific */
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* Select specific */
+select.form-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+select.form-input.is-valid {
+  padding-right: 4rem; /* More space for both dropdown arrow and checkmark */
+}
+
+select.form-input option {
+  padding: 0.5rem;
+}
+
+/* Textarea specific */
+textarea.form-input {
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+  padding: 0.75rem;
+}
+
+/* Choice group (radio, checkbox) */
+.choice-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.choice-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.choice-option:hover {
+  background-color: var(--surface-50);
+}
+
+.choice-input {
+  cursor: pointer;
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.choice-label {
+  cursor: pointer;
+  user-select: none;
+  flex: 1;
+  color: var(--text-primary);
+}
+
+/* Date picker specific */
+.date-input {
+  cursor: pointer;
+}
+
+/* Static elements (heading, paragraph, divider) */
+.static-element {
+  margin: 1rem 0;
+}
+
+/* File upload */
+.upload-area {
+  border: 2px dashed var(--surface-border);
+  border-radius: 6px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-area:hover {
+  border-color: var(--primary-color);
+  background-color: var(--surface-50);
+}
+
+.upload-area.drag-over {
+  border-color: var(--primary-color);
+  background-color: var(--primary-50);
+}

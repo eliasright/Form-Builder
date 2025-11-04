@@ -1,33 +1,31 @@
 <template>
   <div class="render-view">
-    <!-- Form Controls -->
-    <div class="form-controls">
-      <div class="control-group">
-        <label for="import-form" class="import-label">
-          <i class="pi pi-upload"></i>
-          Import Form
-        </label>
-        <input
-          id="import-form"
-          type="file"
-          accept=".json"
-          @change="handleImportForm"
-          style="display: none;"
-        />
-      </div>
-      
-      <div class="control-group">
-        <button @click="saveForm" class="save-btn">
-          <i class="pi pi-save"></i>
-          Save Form
-        </button>
-      </div>
+    <!-- Subtle import button in corner -->
+    <div class="import-container">
+      <label for="import-form" class="import-icon-btn" title="Import Form">
+        <i class="pi pi-upload"></i>
+      </label>
+      <input
+        id="import-form"
+        type="file"
+        accept=".json"
+        @change="handleImportForm"
+        style="display: none;"
+      />
     </div>
 
-    <FormViewer 
+    <FormViewer
       :schema="formSchema"
       @submit="handleFormSubmit"
       @reset="handleFormReset"
+    />
+
+    <FormResultsModal
+      :is-open="showModal"
+      :data="submittedData"
+      :form-name="formSchema?.meta?.name"
+      @close="closeModal"
+      @download="downloadResponses"
     />
   </div>
 </template>
@@ -36,10 +34,13 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import FormViewer from '@/components/FormViewer.vue'
+import FormResultsModal from '@/components/FormResultsModal.vue'
 import type { FormSchema } from '@/types/schema'
 
 const route = useRoute()
 const formSchema = ref<FormSchema | null>(null)
+const showModal = ref(false)
+const submittedData = ref<Record<string, any>>({})
 
 // Load form schema on mount
 onMounted(() => {
@@ -77,6 +78,7 @@ const loadFormSchema = () => {
           "columns": [
             {
               "id": "id_v2d700wkn",
+              "name": "field_id_v2d700wkn",
               "type": "text",
               "label": {
                 "show": true,
@@ -116,7 +118,7 @@ const loadFormSchema = () => {
               "type": "radio",
               "label": {
                 "show": true,
-                "value": "Choose Option",
+                "value": "How long I'll be",
                 "defaultValue": "Choose Option",
                 "editable": true
               },
@@ -253,7 +255,8 @@ const saveForm = () => {
   URL.revokeObjectURL(url)
 }
 
-const downloadResponses = (data: Record<string, any>) => {
+const downloadResponses = () => {
+  const data = submittedData.value
   const responses = Object.entries(data).map(([key, value]) => {
     // Find the field label for better formatting
     let label = key
@@ -269,11 +272,11 @@ const downloadResponses = (data: Record<string, any>) => {
     }
     return `${label}: ${value}`
   }).join('\n')
-  
+
   const dataStr = responses
   const dataBlob = new Blob([dataStr], { type: 'text/plain' })
   const url = URL.createObjectURL(dataBlob)
-  
+
   const link = document.createElement('a')
   link.href = url
   link.download = `${formSchema.value?.meta?.name || 'form'}_responses.txt`
@@ -285,12 +288,60 @@ const downloadResponses = (data: Record<string, any>) => {
 
 const handleFormSubmit = (data: Record<string, any>) => {
   console.log('Form submitted with data:', data)
-  
-  // Download the user's responses
-  downloadResponses(data)
-  
-  // Show success message
-  alert(`Form submitted successfully!\n\nResponses have been downloaded.`)
+
+  // Helper function to check if field should be shown (same logic as FormViewer)
+  const shouldShowField = (column: any, formData: Record<string, any>): boolean => {
+    if (!column.conditionalDisplay) return true
+
+    const { field, condition, value } = column.conditionalDisplay
+    const fieldValue = formData[field]
+
+    switch (condition) {
+      case 'equals':
+        return fieldValue === value
+      case 'not_equals':
+        return fieldValue !== value
+      case 'contains':
+        return fieldValue && fieldValue.toString().includes(value)
+      case 'not_empty':
+        return fieldValue !== undefined && fieldValue !== null && fieldValue !== ''
+      case 'empty':
+        return fieldValue === undefined || fieldValue === null || fieldValue === ''
+      default:
+        return true
+    }
+  }
+
+  // Format data with labels for modal display, filtering out hidden fields
+  const formattedData: Record<string, any> = {}
+  Object.entries(data).forEach(([key, value]) => {
+    if (formSchema.value?.fields) {
+      for (const row of formSchema.value.fields) {
+        for (const column of row.columns) {
+          if (column.id === key || column.name === key) {
+            // Only include if field should be visible
+            if (shouldShowField(column, data)) {
+              let label = column.label?.value || key
+              // Add red asterisk for required fields
+              if (column.validation?.required) {
+                label = label + ' *'
+              }
+              formattedData[label] = value
+            }
+            break
+          }
+        }
+      }
+    }
+  })
+
+  // Store data and show modal
+  submittedData.value = formattedData
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
 }
 
 const handleFormReset = () => {
@@ -301,74 +352,50 @@ const handleFormReset = () => {
 <style scoped>
 .render-view {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
+  overflow-y: auto;
+  position: relative;
 }
 
-.form-controls {
+/* Subtle import button in top-right corner */
+.import-container {
+  position: fixed;
+  top: 80px;
+  right: 1.5rem;
+  z-index: 100;
+}
+
+.import-icon-btn {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.control-group {
-  display: flex;
-  align-items: center;
-}
-
-.import-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #3b82f6;
+  width: 48px;
+  height: 48px;
+  background: rgba(59, 130, 246, 0.9);
   color: white;
-  border-radius: 8px;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.import-label:hover {
+.import-icon-btn:hover {
   background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.save-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.save-btn:hover {
-  background: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: scale(1.1);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
 }
 
 @media (max-width: 768px) {
-  .form-controls {
-    flex-direction: column;
-    gap: 0.75rem;
+  .import-container {
+    top: 70px;
+    right: 1rem;
   }
-  
-  .import-label,
-  .save-btn {
-    width: 100%;
-    justify-content: center;
+
+  .import-icon-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
   }
 }
 </style>

@@ -10,35 +10,31 @@
     </div>
     
     <div class="select-wrapper">
-      <select 
+      <select
         v-model="selectedValue"
         :required="config.validation.required"
         :disabled="false"
-        :class="['select-input', { 'has-error': validationError, 'is-valid': isValid && selectedValue }]"
+        :class="['form-input', { 'has-error': validationError, 'is-valid': isValid && selectedValue }]"
         @change="validateInput"
         @blur="validateInput"
       >
         <option value="" disabled>{{ config.placeholder.value || 'Select an option...' }}</option>
-        <option 
-          v-for="option in config.props.options" 
-          :key="option.value" 
+        <option
+          v-for="option in config.props.options"
+          :key="option.value"
           :value="option.value"
         >
           {{ option.label }}
         </option>
       </select>
-      
+
       <i class="pi pi-chevron-down select-icon"></i>
+      <div v-if="isValid && selectedValue && !validationError" class="success-indicator"></div>
     </div>
-    
+
     <div v-if="validationError" class="error-message">
       <i class="pi pi-exclamation-triangle"></i>
       {{ validationError }}
-    </div>
-    
-    <div v-else-if="isValid && selectedValue" class="success-message">
-      <i class="pi pi-check"></i>
-      Valid selection
     </div>
     
     <small v-if="config.helpText.show && config.helpText.value" class="help-text">
@@ -333,6 +329,8 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
 </script>
 
 <style scoped>
+@import '@/assets/styles/formElements.css';
+
 .select-element {
   display: flex;
   flex-direction: column;
@@ -363,37 +361,13 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   position: relative;
 }
 
-.select-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease;
+.form-input {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
   cursor: pointer;
   padding-right: 2.5rem;
   background-image: none;
-}
-
-.select-input:focus {
-  outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
-}
-
-.select-input.has-error {
-  border-color: var(--text-danger);
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
-}
-
-.select-input.is-valid {
-  border-color: #10b981;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
 }
 
 .select-icon {
@@ -406,21 +380,13 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   font-size: 0.8rem;
 }
 
-.error-message,
-.success-message {
+.error-message {
+  color: var(--text-danger);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.8rem;
-}
-
-.error-message {
-  color: var(--text-danger);
-}
-
-.success-message {
-  color: #10b981;
 }
 
 .help-text {

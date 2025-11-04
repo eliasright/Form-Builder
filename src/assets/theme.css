@@ -136,3 +136,10 @@ body {
   --p-red-300: var(--color-grey-500);
   --p-red-600: #ef4444;
 }
+
+/* Override PrimeIcons backface-visibility that causes icons to disappear on hover */
+.pi:before,
+.pi::before {
+  -webkit-backface-visibility: visible !important;
+  backface-visibility: visible !important;
+}

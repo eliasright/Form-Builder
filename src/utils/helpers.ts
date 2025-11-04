@@ -130,3 +130,25 @@ export function debounce<T extends (...args: Parameters<T>) => void>(
     }, wait)
   }
 }
+
+/**
+ * Deep clone an object using structuredClone (with JSON fallback)
+ * More efficient and type-safe than JSON.parse(JSON.stringify())
+ */
+export function deepClone<T>(value: T): T {
+  // Use structuredClone if available (modern browsers and Node 17+)
+  if (typeof structuredClone !== 'undefined') {
+    try {
+      return structuredClone(value)
+    } catch {
+      // Fallback for circular references or unsupported types
+    }
+  }
+
+  // Fallback to JSON method (loses functions, dates become strings)
+  if (typeof value === 'object' && value !== null) {
+    return JSON.parse(JSON.stringify(value)) as T
+  }
+
+  return value
+}

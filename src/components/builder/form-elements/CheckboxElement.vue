@@ -13,62 +13,60 @@
       <small>{{ config.helpText.value }}</small>
     </div>
     
-    <div :class="['checkbox-group', config.props.layout]">
-      <div 
-        v-for="option in config.props.options" 
-        :key="option.value"
-        class="checkbox-option"
-      >
-        <label class="checkbox-container">
-          <input 
-            v-model="selectedValues"
-            type="checkbox"
-            :value="option.value"
-            :disabled="isMaxReached && !selectedValues.includes(option.value)"
-            class="checkbox-input"
-            @change="validateInput"
+    <div class="input-wrapper">
+      <div :class="['checkbox-group', config.props.layout]">
+        <div
+          v-for="option in config.props.options"
+          :key="option.value"
+          class="checkbox-option"
+        >
+          <label class="checkbox-container">
+            <input
+              v-model="selectedValues"
+              type="checkbox"
+              :value="option.value"
+              :disabled="isMaxReached && !selectedValues.includes(option.value)"
+              class="checkbox-input"
+              @change="validateInput"
+            />
+            <span class="checkbox-checkmark"></span>
+            <span class="checkbox-text">{{ option.label }}</span>
+          </label>
+        </div>
+
+        <!-- Custom "Other" Option -->
+        <div v-if="config.props.allowCustom" class="checkbox-option custom-option">
+          <label class="checkbox-container">
+            <input
+              v-model="hasCustomValue"
+              type="checkbox"
+              :disabled="isMaxReached && !hasCustomValue"
+              class="checkbox-input"
+              @change="handleCustomChange"
+            />
+            <span class="checkbox-checkmark"></span>
+            <span class="checkbox-text">Other:</span>
+          </label>
+          <input
+            v-if="hasCustomValue"
+            v-model="customValue"
+            type="text"
+            class="custom-input"
+            placeholder="Please specify..."
+            @input="validateInput"
           />
-          <span class="checkbox-checkmark"></span>
-          <span class="checkbox-text">{{ option.label }}</span>
-        </label>
+        </div>
       </div>
-      
-      <!-- Custom "Other" Option -->
-      <div v-if="config.props.allowCustom" class="checkbox-option custom-option">
-        <label class="checkbox-container">
-          <input 
-            v-model="hasCustomValue"
-            type="checkbox"
-            :disabled="isMaxReached && !hasCustomValue"
-            class="checkbox-input"
-            @change="handleCustomChange"
-          />
-          <span class="checkbox-checkmark"></span>
-          <span class="checkbox-text">Other:</span>
-        </label>
-        <input 
-          v-if="hasCustomValue"
-          v-model="customValue"
-          type="text" 
-          class="custom-input"
-          placeholder="Please specify..."
-          @input="validateInput"
-        />
-      </div>
+      <div v-if="isValid && selectedValues.length > 0 && !validationError" class="success-indicator"></div>
     </div>
-    
+
     <div class="selection-info">
       <small>{{ selectedCount }}/{{ maxSelections }} selected</small>
     </div>
-    
+
     <div v-if="validationError" class="error-message">
       <i class="pi pi-exclamation-triangle"></i>
       {{ validationError }}
-    </div>
-    
-    <div v-else-if="isValid && selectedValues.length > 0" class="success-message">
-      <i class="pi pi-check"></i>
-      Valid selection
     </div>
   </div>
 </template>
@@ -457,6 +455,8 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
 </script>
 
 <style scoped>
+@import '@/assets/styles/formElements.css';
+
 .checkbox-element {
   display: flex;
   flex-direction: column;
@@ -621,21 +621,13 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   font-weight: 500;
 }
 
-.error-message,
-.success-message {
+.error-message {
+  color: var(--text-danger);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.8rem;
-}
-
-.error-message {
-  color: var(--text-danger);
-}
-
-.success-message {
-  color: #10b981;
 }
 
 /* Responsive adjustments */

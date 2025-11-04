@@ -9,36 +9,34 @@
       {{ config.description.value }}
     </div>
     
-    <div :class="['radio-group', config.props.layout]">
-      <div 
-        v-for="option in config.props.options" 
-        :key="option.value"
-        class="radio-option"
-      >
-        <label class="radio-container">
-          <input 
-            v-model="selectedValue"
-            type="radio"
-            :value="option.value"
-            :name="`radio-${elementId}`"
-            :required="config.validation.required"
-            class="radio-input"
-            @change="validateInput"
-          />
-          <span class="radio-checkmark"></span>
-          <span class="radio-text">{{ option.label }}</span>
-        </label>
+    <div class="input-wrapper">
+      <div :class="['radio-group', config.props.layout]">
+        <div
+          v-for="option in config.props.options"
+          :key="option.value"
+          class="radio-option"
+        >
+          <label class="radio-container">
+            <input
+              v-model="selectedValue"
+              type="radio"
+              :value="option.value"
+              :name="`radio-${elementId}`"
+              :required="config.validation.required"
+              class="radio-input"
+              @change="validateInput"
+            />
+            <span class="radio-checkmark"></span>
+            <span class="radio-text">{{ option.label }}</span>
+          </label>
+        </div>
       </div>
+      <div v-if="isValid && selectedValue && !validationError" class="success-indicator"></div>
     </div>
-    
+
     <div v-if="validationError" class="error-message">
       <i class="pi pi-exclamation-triangle"></i>
       {{ validationError }}
-    </div>
-    
-    <div v-else-if="isValid && selectedValue" class="success-message">
-      <i class="pi pi-check"></i>
-      Valid selection
     </div>
     
     <small v-if="config.helpText.show && config.helpText.value" class="help-text">
@@ -344,6 +342,8 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
 </script>
 
 <style scoped>
+@import '@/assets/styles/formElements.css';
+
 .radio-element {
   display: flex;
   flex-direction: column;
@@ -447,21 +447,13 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   font-size: 0.9rem;
 }
 
-.error-message,
-.success-message {
+.error-message {
+  color: var(--text-danger);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.8rem;
-}
-
-.error-message {
-  color: var(--text-danger);
-}
-
-.success-message {
-  color: #10b981;
 }
 
 .help-text {

@@ -87,8 +87,9 @@ onMounted(() => {
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden; /* Prevent page scrolling completely */
   height: 100vh;
+  width: 100vw;
 }
 
 .custom-menubar {
@@ -134,16 +135,19 @@ body {
 }
 
 .app-container {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
-  overflow-x: hidden;
+  overflow: hidden; /* Prevent scrolling at app level */
+  display: flex;
+  flex-direction: column;
 }
 
 .main-content {
   background: var(--p-surface-ground);
   width: 100%;
-  height: calc(100vh - 60px);
+  flex: 1; /* Take remaining space after menubar */
   margin: 0;
   padding: 0;
+  overflow: hidden; /* No scrolling - let child views handle it */
 }
 </style>

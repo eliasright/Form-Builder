@@ -1728,6 +1728,8 @@ fixElementNames()
   display: flex;
   flex-direction: column;
   background: var(--bg-primary);
+  height: 100%; /* Constrain height to enable scrolling */
+  overflow: hidden; /* Prevent outer scroll, let .canvas-area scroll */
 }
 
 .editor-header {

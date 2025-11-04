@@ -233,7 +233,7 @@ const handleSubmit = () => {
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--p-text-color);
+  color: #ffffff !important; /* Always white */
 }
 
 .form-description {
@@ -241,7 +241,7 @@ const handleSubmit = () => {
   font-size: 1.1rem;
   opacity: 0.9;
   line-height: 1.5;
-  color: var(--p-text-muted-color);
+  color: #ffffff !important; /* Always white */
 }
 
 .form-content {
@@ -329,6 +329,16 @@ const handleSubmit = () => {
   background: var(--p-surface-200);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .reset-btn {
+    color: #000000;
+  }
+
+  .reset-btn i {
+    color: #000000;
+  }
 }
 
 .success-message {

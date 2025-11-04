@@ -10,7 +10,7 @@
     </div>
     
     <div class="input-wrapper">
-      <textarea 
+      <textarea
         v-model="inputValue"
         :placeholder="config.placeholder.value"
         :required="config.validation.required"
@@ -18,24 +18,20 @@
         :maxlength="config.validation.maxLength"
         :rows="config.props.rows"
         :disabled="false"
-        :class="['textarea-input', { 'has-error': validationError, 'is-valid': isValid && inputValue }]"
+        :class="['form-input', { 'has-error': validationError, 'is-valid': isValid && inputValue }]"
         @input="validateInput"
         @blur="validateInput"
       />
-      
+
       <div v-if="config.validation.maxLength" class="character-count">
         {{ inputValue.length }}/{{ config.validation.maxLength }}
       </div>
+      <div v-if="isValid && inputValue && !validationError" class="success-indicator"></div>
     </div>
-    
+
     <div v-if="validationError" class="error-message">
       <i class="pi pi-exclamation-triangle"></i>
       {{ validationError }}
-    </div>
-    
-    <div v-else-if="isValid && inputValue" class="success-message">
-      <i class="pi pi-check"></i>
-      Valid input
     </div>
     
     <small v-if="config.helpText.show && config.helpText.value" class="help-text">
@@ -413,7 +409,7 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   position: relative;
 }
 
-.textarea-input {
+.form-input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -421,26 +417,41 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-size: 0.9rem;
-  font-family: inherit;
-  resize: none;
-  min-height: 60px;
   transition: border-color 0.2s ease;
+  min-height: 120px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
 }
 
-.textarea-input:focus {
+.form-input:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.1);
 }
 
-.textarea-input.has-error {
+.form-input.has-error {
   border-color: var(--text-danger);
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1);
 }
 
-.textarea-input.is-valid {
+.form-input.is-valid {
   border-color: #10b981;
   box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+
+.success-indicator {
+  position: absolute;
+  right: 0.75rem;
+  top: 1rem;
+  color: #10b981;
+  font-size: 1.25rem;
+  pointer-events: none;
+}
+
+.success-indicator::before {
+  content: '✓';
+  font-weight: bold;
 }
 
 .character-count {
@@ -453,21 +464,13 @@ export function generateSettings(currentConfig: typeof defaultConfig) {
   padding: 0 0.25rem;
 }
 
-.error-message,
-.success-message {
+.error-message {
+  color: var(--text-danger);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-top: 0.5rem;
   font-size: 0.8rem;
-}
-
-.error-message {
-  color: var(--text-danger);
-}
-
-.success-message {
-  color: #10b981;
 }
 
 .help-text {
